@@ -62,12 +62,36 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define PT_S OPT_T(KC_S)
 #define PT_D CMD_T(KC_D)
 #define PT_F SFT_T(KC_F)
-#define PT_J SFT_T(KC_J)
-#define PT_K CMD_T(KC_K)
-#define PT_L OPT_T(KC_L)
-#define PT_SCLN CTL_T(KC_SCLN)
 #define PT_SPC LT(LAYER_MIDDLE, KC_SPC)
 #define PT_SLSH LT(LAYER_POINTER, KC_SLSH)
+
+enum custom_keycodes {
+    SMTD_KEYCODES_BEGIN = SAFE_RANGE,
+    CKC_SCLN, // reads as C(ustom) + KC_A, but you may give any name here
+    CKC_L,
+    CKC_K,
+    CKC_J,
+    SMTD_KEYCODES_END,
+};
+#include "sm_td.h"
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!process_smtd(keycode, record)) {
+        return false;
+    }
+    // your code here
+
+    return true;
+}
+
+void on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
+    switch (keycode) {
+        SMTD_MT(CKC_SCLN, KC_SCLN, KC_LEFT_CTRL)
+        SMTD_MT(CKC_L, KC_L, KC_LOPT)
+        SMTD_MT(CKC_K, KC_K, KC_LCMD)
+        SMTD_MT(CKC_J, KC_J, KC_LSFT)
+    }
+}
 
 enum combos {
     ER_MINUS,
@@ -95,15 +119,15 @@ const uint16_t PROGMEM ui_combo[] = {KC_U, KC_I, COMBO_END};
 const uint16_t PROGMEM we_combo[] = {KC_W, KC_E, COMBO_END};
 const uint16_t PROGMEM io_combo[] = {KC_I, KC_O, COMBO_END};
 const uint16_t PROGMEM fg_combo[] = {PT_F, KC_G, COMBO_END};
-const uint16_t PROGMEM jh_combo[] = {PT_J, KC_H, COMBO_END};
+const uint16_t PROGMEM jh_combo[] = {CKC_J, KC_H, COMBO_END};
 const uint16_t PROGMEM vb_combo[] = {KC_V, KC_B, COMBO_END};
 const uint16_t PROGMEM mn_combo[] = {KC_M, KC_N, COMBO_END};
 const uint16_t PROGMEM rt_combo[] = {KC_R, KC_T, COMBO_END};
 const uint16_t PROGMEM uy_combo[] = {KC_U, KC_Y, COMBO_END};
 const uint16_t PROGMEM qw_combo[] = {KC_Q, KC_W, COMBO_END};
-const uint16_t PROGMEM fj_combo[] = {PT_F, PT_J, COMBO_END};
-const uint16_t PROGMEM dk_combo[] = {PT_D, PT_K, COMBO_END};
-const uint16_t PROGMEM sl_combo[] = {PT_S, PT_L, COMBO_END};
+const uint16_t PROGMEM fj_combo[] = {PT_F, CKC_J, COMBO_END};
+const uint16_t PROGMEM dk_combo[] = {PT_D, CKC_K, COMBO_END};
+const uint16_t PROGMEM sl_combo[] = {PT_S, CKC_L, COMBO_END};
 const uint16_t PROGMEM comma_m_combo[] = {KC_COMM, KC_M, COMBO_END};
 const uint16_t PROGMEM spc_raise_combo[] = {KC_SPC, RAISE, COMBO_END};
 const uint16_t PROGMEM dot_slsh_combo[] = {KC_DOT, PT_SLSH, COMBO_END};
@@ -138,7 +162,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
         KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,      KC_Y,    KC_U,    KC_I,    KC_O, KC_P,    KC_BSLS,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-        KC_LSFT,   PT_A,    PT_S,    PT_D,    PT_F,    KC_G,      KC_H,    PT_J,    PT_K,    PT_L, PT_SCLN, KC_QUOT,
+        KC_LSFT,   PT_A,    PT_S,    PT_D,    PT_F,    KC_G,      KC_H,    CKC_J, CKC_K,   CKC_L,  CKC_SCLN, KC_QUOT,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
         KC_LCTL,   PT_Z,    KC_X,    KC_C,    KC_V,    KC_B,      KC_N,    KC_M, KC_COMM,  KC_DOT, PT_SLSH, KC_LALT,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
